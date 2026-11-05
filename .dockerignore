@@ -1,0 +1,9 @@
+.env
+var/
+**/.venv
+**/node_modules
+frontend/dist
+.git
+.worktrees
+**/__pycache__
+.mypy_cache

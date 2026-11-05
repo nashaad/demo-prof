@@ -1,4 +1,6 @@
+import base64
 import json
+import secrets
 from dataclasses import asdict
 import sqlite3
 from collections.abc import Iterator
@@ -7,16 +9,48 @@ from typing import Any
 
 from fastapi import FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import StreamingResponse
+from fastapi.responses import FileResponse, Response, StreamingResponse
+from fastapi.staticfiles import StaticFiles
+from starlette.types import ASGIApp, Receive, Scope, Send
 
 from prof import agents
-from prof.config import SQLITE_PATH
+from prof.config import APP_PASSWORD, FRONTEND_DIST, SQLITE_PATH
 from prof.events import Error, to_dict
 from prof.run_trace import load_run_trace
 
 EVALS_DIR = Path(__file__).resolve().parents[1] / "evals"
 
 DOCUMENT_COLUMNS = "doc_id, title, domain, criticality, revision, effective_date, status, supersedes"
+
+
+
+class BasicAuthMiddleware:
+    """Pure ASGI so streamed responses pass through unbuffered."""
+
+    def __init__(self, app: ASGIApp, password: str) -> None:
+        self.app = app
+        self.expected = f"demo:{password}".encode()
+
+    async def __call__(self, scope: Scope, receive: Receive, send: Send) -> None:
+        if scope["type"] == "http" and not self._authorized(scope):
+            response = Response(status_code=401, headers={"WWW-Authenticate": 'Basic realm="prof"'})
+            await response(scope, receive, send)
+            return
+        await self.app(scope, receive, send)
+
+    def _authorized(self, scope: Scope) -> bool:
+        for name, value in scope["headers"]:
+            if name == b"authorization":
+                scheme, _, token = value.partition(b" ")
+                if scheme.lower() != b"basic":
+                    return False
+                try:
+                    given = base64.b64decode(token, validate=True)
+                except ValueError:
+                    return False
+                return secrets.compare_digest(given, self.expected)
+        return False
+
 
 app = FastAPI(title="prof")
 app.add_middleware(
@@ -25,6 +59,8 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+if APP_PASSWORD:
+    app.add_middleware(BasicAuthMiddleware, password=APP_PASSWORD)
 
 
 def _sse(payload: dict[str, Any]) -> str:
@@ -113,3 +149,16 @@ def list_evals() -> list[dict[str, Any]]:
     for path in sorted(EVALS_DIR.glob("results-*.json")):
         results.append({"setup": path.stem.removeprefix("results-"), "data": json.loads(path.read_text())})
     return results
+
+
+if FRONTEND_DIST.is_dir():
+    app.mount("/assets", StaticFiles(directory=FRONTEND_DIST / "assets"), name="assets")
+
+    @app.get("/{path:path}", include_in_schema=False)
+    def spa(path: str) -> FileResponse:
+        if path == "api" or path.startswith("api/"):
+            raise HTTPException(status_code=404, detail="not found")
+        candidate = (FRONTEND_DIST / path).resolve()
+        if candidate.is_file() and candidate.is_relative_to(FRONTEND_DIST.resolve()):
+            return FileResponse(candidate)
+        return FileResponse(FRONTEND_DIST / "index.html")

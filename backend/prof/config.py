@@ -9,6 +9,7 @@ load_dotenv(REPO_ROOT / ".env")
 DOCS_DIR = REPO_ROOT / "data" / "docs"
 SEED_FACTS = REPO_ROOT / "data" / "seed_facts.json"
 VAR_DIR = REPO_ROOT / "var"
+FRONTEND_DIST = REPO_ROOT / "frontend" / "dist"
 SQLITE_PATH = VAR_DIR / "docs.sqlite"
 CHROMA_DIR = VAR_DIR / "chroma"
 AGENT_DB_PATH = VAR_DIR / "agent.sqlite"
@@ -17,6 +18,9 @@ CHAT_MODEL = os.environ.get("PROF_CHAT_MODEL", "gpt-6-luna")
 EMBEDDING_MODEL = "text-embedding-3-small"
 RERANK_MODEL = os.environ.get("PROF_RERANK_MODEL", "cohere/rerank-v3.5")
 RERANK_BASE_URL = "https://openrouter.ai/api"
+
+# Basic auth for the whole app (user "demo") when set; unset leaves it open.
+APP_PASSWORD = os.environ.get("APP_PASSWORD", "")
 
 DOMAINS = ("safety", "maintenance", "quality")
 
