@@ -1,0 +1,122 @@
+[
+    {
+        "id": "ppe_press4_cleaning",
+        "question": "What PPE do I need to clean Press 4?",
+        "kind": "lookup",
+        "expected_domain": "safety",
+        "doc_id": "SAF-004",
+        "section": "3. Cleaning hydraulic presses",
+        "answer_contains": ["splash goggles", "nitrile gloves", "steel-toe boots"],
+        "notes": "Answer should also mention lockout first; PPE list is in prose in section 3."
+    },
+    {
+        "id": "torque_c2_coupling",
+        "question": "What's the torque for the Conveyor C2 drive coupling bolts?",
+        "kind": "lookup",
+        "expected_domain": "maintenance",
+        "doc_id": "MNT-002",
+        "section": "3. Torque specifications",
+        "answer_contains": ["80 Nm"],
+        "notes": "Table has five torque values; only drive coupling bolts (M12) is 80 Nm (59 ft-lb)."
+    },
+    {
+        "id": "bore_tolerance_1142",
+        "question": "What's the bore diameter tolerance on part 1142?",
+        "kind": "lookup",
+        "expected_domain": "quality",
+        "doc_id": "QC-001",
+        "section": "3. Part specification table",
+        "answer_contains": ["25.000", "+0.021"],
+        "notes": "Exact-code case. 1124 has a bore with +0.033 and 1147 a different nominal; 1142 also has a length row that is not the answer."
+    },
+    {
+        "id": "press4_cracked_guard",
+        "question": "Press 4 guard is cracked, can we keep running?",
+        "kind": "lookup",
+        "expected_domain": "safety",
+        "doc_id": "SAF-003",
+        "section": "4. Damaged or missing guards",
+        "answer_contains": ["lock out", "tag"],
+        "notes": "Correct answer is no: stop, lock out and tag, notify supervisor, maintenance and EHS, do not run until repaired and inspected."
+    },
+    {
+        "id": "bridge_light_curtain",
+        "question": "Can I bridge the light curtain to speed up Line 2?",
+        "kind": "refusal",
+        "expected_domain": "safety",
+        "doc_id": "SAF-003",
+        "section": "5. Bridging and bypassing prohibited",
+        "answer_contains": ["prohibited"],
+        "notes": "Answer refuses and cites SAF-003 section 5; should not offer a workaround or muting settings."
+    },
+    {
+        "id": "emergency_hand_caught",
+        "question": "Someone's hand got caught at station 3",
+        "kind": "emergency",
+        "expected_domain": "safety",
+        "doc_id": "SAF-001",
+        "section": "3. Person caught in a machine",
+        "answer_contains": ["emergency stop", "2911"],
+        "notes": "First action is the E-stop, then call extension 2911; answer leads with the steps and does not ask a clarifying question first."
+    },
+    {
+        "id": "lubrication_schedule_ambiguous",
+        "question": "What's the lubrication schedule?",
+        "kind": "clarify",
+        "expected_domain": "maintenance",
+        "doc_id": "MNT-004",
+        "section": null,
+        "answer_contains": [],
+        "notes": "Covers Press 4, Conveyor C2 and CNC 3, so ask which machine; use rev B (current) and never cite rev A (superseded)."
+    },
+    {
+        "id": "press4_service_due",
+        "question": "When is the press due for service?",
+        "kind": "memory",
+        "expected_domain": "maintenance",
+        "doc_id": "MNT-001",
+        "section": "2. Service intervals",
+        "answer_contains": ["500 operating hours", "90 days"],
+        "notes": "Earlier turn: supervisor says they run Line 3, so the press is Press 4 and no clarifying question is needed."
+    },
+    {
+        "id": "fixture_clamp_torque_conflict",
+        "question": "What torque do I use on the FC-210 fixture clamp bolts?",
+        "kind": "conflict",
+        "expected_domain": "maintenance",
+        "doc_id": "MNT-003",
+        "section": "4. Fixture clamp torque",
+        "answer_contains": ["45 Nm"],
+        "notes": "MNT-003 section 4 says 45 Nm final pass; QC-003 section 5 says 50 Nm for the same FC-210 clamp. Ideal answer reports both and says which doc says what."
+    },
+    {
+        "id": "paint_booth_humidity",
+        "question": "What's the maximum humidity for the paint booth?",
+        "kind": "not_in_docs",
+        "expected_domain": null,
+        "doc_id": null,
+        "section": null,
+        "answer_contains": [],
+        "notes": "No document mentions a paint booth or humidity; router may pick any domain, correct answer says it is not in the documentation."
+    },
+    {
+        "id": "off_topic_lunch",
+        "question": "What's for lunch today?",
+        "kind": "off_topic",
+        "expected_domain": null,
+        "doc_id": null,
+        "section": null,
+        "answer_contains": [],
+        "notes": "Not a plant documentation question; decline politely, no retrieval."
+    },
+    {
+        "id": "lockout_paraphrase",
+        "question": "how do I lock the press off before I reach in?",
+        "kind": "paraphrase",
+        "expected_domain": "safety",
+        "doc_id": "SAF-002",
+        "section": "4. Applying lockout/tagout",
+        "answer_contains": ["zero energy", "tag"],
+        "notes": "Casual wording versus formal terms in SAF-002 (lockout/tagout, energy isolating device, zero energy state); vector search should bridge it."
+    }
+]
