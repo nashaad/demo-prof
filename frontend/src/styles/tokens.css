@@ -1,0 +1,90 @@
+:root {
+    --font-sans: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, "Helvetica Neue", Arial, sans-serif;
+    --font-mono: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace;
+    --r-sm: 6px;
+    --r-md: 8px;
+    --r-lg: 10px;
+    --r-xl: 14px;
+    --r-2xl: 18px;
+    --type-scale: 1.18;
+    --dur: 150ms;
+    --ease: cubic-bezier(0.2, 0, 0, 1);
+
+    color-scheme: dark;
+    --background: #1a1a1a;
+    --foreground: #ececec;
+    --card: #212121;
+    --popover: #242424;
+    --primary: #ececec;
+    --primary-foreground: #171717;
+    --secondary: #2c2c2c;
+    --secondary-foreground: #ececec;
+    --muted: #262626;
+    --muted-foreground: #9b9b9b;
+    --accent: #2c2c2c;
+    --accent-foreground: #ececec;
+    --border: rgba(255, 255, 255, 0.09);
+    --input: rgba(255, 255, 255, 0.13);
+    --ring: #6b6b6b;
+    --input-bg: rgba(255, 255, 255, 0.03);
+    --destructive: #f26161;
+    --success: #4cbb68;
+    --warning: #e3a530;
+    --sidebar: #141414;
+    --overlay: rgba(0, 0, 0, 0.6);
+    --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.3);
+    --shadow-md: 0 12px 32px -8px rgba(0, 0, 0, 0.6), 0 2px 6px -2px rgba(0, 0, 0, 0.4);
+    --shadow-lg: 0 32px 72px -12px rgba(0, 0, 0, 0.75);
+    --tab-on: rgba(255, 255, 255, 0.09);
+    --tab-on-border: rgba(255, 255, 255, 0.1);
+
+    --dom-safety: #f08a5d;
+    --dom-maintenance: #7cb4f7;
+    --dom-quality: #5fc2a8;
+    --dom-none: #9b9b9b;
+    --chart-a: #7cb4f7;
+    --chart-b: #e5a26b;
+    --chart-c: #c792ea;
+    --chart-d: #5fc2a8;
+    --highlight: rgba(227, 165, 48, 0.14);
+}
+
+:root[data-theme="light"] {
+    color-scheme: light;
+    --background: #ffffff;
+    --foreground: #171717;
+    --card: #ffffff;
+    --popover: #ffffff;
+    --primary: #171717;
+    --primary-foreground: #fafafa;
+    --secondary: #f4f4f4;
+    --secondary-foreground: #171717;
+    --muted: #f4f4f4;
+    --muted-foreground: #737373;
+    --accent: #f0f0f0;
+    --accent-foreground: #171717;
+    --border: #e6e6e6;
+    --input: #e0e0e0;
+    --ring: #a3a3a3;
+    --input-bg: transparent;
+    --destructive: #dc2626;
+    --success: #16a34a;
+    --warning: #d97706;
+    --sidebar: #f9f9f9;
+    --overlay: rgba(0, 0, 0, 0.35);
+    --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 8px 24px -6px rgba(0, 0, 0, 0.14), 0 2px 6px -2px rgba(0, 0, 0, 0.06);
+    --shadow-lg: 0 24px 56px -12px rgba(0, 0, 0, 0.28);
+    --tab-on: #ffffff;
+    --tab-on-border: transparent;
+
+    --dom-safety: #c2410c;
+    --dom-maintenance: #2563eb;
+    --dom-quality: #0f8a70;
+    --dom-none: #737373;
+    --chart-a: #2563eb;
+    --chart-b: #d97706;
+    --chart-c: #9333ea;
+    --chart-d: #0f8a70;
+    --highlight: rgba(217, 119, 6, 0.12);
+}
