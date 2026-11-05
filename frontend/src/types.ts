@@ -17,6 +17,21 @@ export interface Passage {
     rerank_score: number | null;
 }
 
+export interface SearchStats {
+    domain: string | null;
+    keyword_query: string;
+    candidate_limit: number;
+    keyword_hits: number;
+    meaning_hits: number;
+    merged: number;
+    reranked: number;
+    rerank_model: string | null;
+    rerank_failed: boolean;
+    min_score: number | null;
+    below_min_score: number;
+    returned: number;
+}
+
 export interface Citation {
     doc_id: string;
     title: string;
@@ -63,6 +78,7 @@ export interface PassagesEvent {
     agent: string;
     query: string;
     passages: Passage[];
+    searches: SearchStats[];
 }
 
 export interface GuardrailEvent {
@@ -151,4 +167,60 @@ export interface DemoUser {
     id: string;
     name: string;
     role: string;
+}
+
+export interface TraceToolCallRequest {
+    name: string;
+    args: Record<string, unknown>;
+}
+
+export interface TraceMessage {
+    role: string;
+    content: string;
+    from_history: boolean;
+    tool_calls: TraceToolCallRequest[];
+}
+
+export interface TraceToolCall {
+    tool: string;
+    args: Record<string, unknown>;
+    result: string;
+    duration: number | null;
+}
+
+export interface ModelMetrics {
+    calls?: number;
+    input_tokens?: number;
+    output_tokens?: number;
+    reasoning_tokens?: number;
+    cache_read_tokens?: number;
+    cache_write_tokens?: number;
+    duration?: number;
+    time_to_first_token?: number;
+}
+
+export interface AgentCall {
+    run_id: string;
+    agent_id: string;
+    agent: string;
+    status: string;
+    model: string;
+    input: string;
+    reply: string;
+    messages: TraceMessage[];
+    tool_calls: TraceToolCall[];
+    metrics: ModelMetrics;
+}
+
+export interface GuardrailRule {
+    name: string;
+    looks_for: string;
+}
+
+export interface RunTrace {
+    run_id: string;
+    router: AgentCall;
+    members: AgentCall[];
+    memory_metrics: ModelMetrics | null;
+    guardrails: GuardrailRule[];
 }

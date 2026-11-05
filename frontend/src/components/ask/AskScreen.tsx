@@ -13,9 +13,10 @@ interface AskScreenProps {
     userId: string;
     onUser: (id: string) => void;
     onOpen: (ref: DocRef) => void;
+    onTrace: (turnId: string) => void;
 }
 
-export function AskScreen({ convo, userId, onUser, onOpen }: AskScreenProps) {
+export function AskScreen({ convo, userId, onUser, onOpen, onTrace }: AskScreenProps) {
     const [panel, setPanel] = useState<AskPanel>("chat");
     const user = DEMO_USERS.find((u) => u.id === userId) ?? DEMO_USERS[0];
 
@@ -37,7 +38,7 @@ export function AskScreen({ convo, userId, onUser, onOpen }: AskScreenProps) {
             <div className="ask-body">
                 <section className="chat-col" aria-label="Conversation">
                     <div className="chat-scroll">
-                        <Conversation convo={convo} user={user} onOpen={onOpen} onShowSteps={showSteps} />
+                        <Conversation convo={convo} user={user} onOpen={onOpen} onShowSteps={showSteps} onTrace={onTrace} />
                     </div>
                     <div className="chat-foot">
                         {convo.turns.length > 0 && (

@@ -1,3 +1,4 @@
+import type { MouseEvent } from "react";
 import { seconds } from "../../format";
 import type { AnswerEvent, DocRef } from "../../types";
 import { DomainBadge, domainKey, domainLabel } from "../common/DomainBadge";
@@ -10,6 +11,7 @@ interface AnswerCardProps {
     routedDomain: string | undefined;
     onOpen: (ref: DocRef) => void;
     onShowSteps: () => void;
+    onTrace: () => void;
 }
 
 function badgeDomain(answer: AnswerEvent, routedDomain: string | undefined): string {
@@ -18,11 +20,16 @@ function badgeDomain(answer: AnswerEvent, routedDomain: string | undefined): str
     return domainKey(routedDomain);
 }
 
-export function AnswerCard({ answer, routedDomain, onOpen, onShowSteps }: AnswerCardProps) {
+export function AnswerCard({ answer, routedDomain, onOpen, onShowSteps, onTrace }: AnswerCardProps) {
+    const openTrace = (e: MouseEvent<HTMLElement>) => {
+        if ((e.target as HTMLElement).closest("button, a, summary, details")) return;
+        if (window.getSelection()?.toString()) return;
+        onTrace();
+    };
     const domain = badgeDomain(answer, routedDomain);
     const latency = seconds(answer.metrics?.duration);
     return (
-        <article className="answer">
+        <article className="answer clickable" onClick={openTrace} title="Click to open the run trace">
             <header className="answer-head">
                 <DomainBadge domain={domain} />
                 <span className="muted">
@@ -36,6 +43,9 @@ export function AnswerCard({ answer, routedDomain, onOpen, onShowSteps }: Answer
                 )}
                 <button type="button" className="btn ghost sm steps-btn" onClick={onShowSteps}>
                     <Icon name="steps" size={14} /> Show steps
+                </button>
+                <button type="button" className="btn ghost sm steps-btn" onClick={onTrace}>
+                    <Icon name="search" size={14} /> Open trace
                 </button>
             </header>
             <Markdown text={answer.text} />

@@ -10,9 +10,10 @@ interface BlockedProps {
     answer: AnswerEvent | undefined;
     onOpen: (ref: DocRef) => void;
     onShowSteps: () => void;
+    onTrace: () => void;
 }
 
-function BlockedFoot({ guardrail, onShowSteps }: Pick<BlockedProps, "guardrail" | "onShowSteps">) {
+function BlockedFoot({ guardrail, onShowSteps, onTrace }: Pick<BlockedProps, "guardrail" | "onShowSteps" | "onTrace">) {
     return (
         <footer className="blocked-foot">
             <span>
@@ -21,11 +22,14 @@ function BlockedFoot({ guardrail, onShowSteps }: Pick<BlockedProps, "guardrail" 
             <button type="button" className="btn ghost sm steps-btn" onClick={onShowSteps}>
                 <Icon name="steps" size={14} /> Show steps
             </button>
+            <button type="button" className="btn ghost sm steps-btn" onClick={onTrace}>
+                <Icon name="search" size={14} /> Open trace
+            </button>
         </footer>
     );
 }
 
-export function EmergencyCard({ guardrail, answer, onOpen, onShowSteps }: BlockedProps) {
+export function EmergencyCard({ guardrail, answer, onOpen, onShowSteps, onTrace }: BlockedProps) {
     return (
         <article className="emergency" role="alert">
             <header className="emergency-head">
@@ -45,12 +49,12 @@ export function EmergencyCard({ guardrail, answer, onOpen, onShowSteps }: Blocke
                     <SourceList citations={answer.citations} onOpen={onOpen} />
                 </div>
             )}
-            <BlockedFoot guardrail={guardrail} onShowSteps={onShowSteps} />
+            <BlockedFoot guardrail={guardrail} onShowSteps={onShowSteps} onTrace={onTrace} />
         </article>
     );
 }
 
-export function RefusalCard({ guardrail, answer, onOpen, onShowSteps }: BlockedProps) {
+export function RefusalCard({ guardrail, answer, onOpen, onShowSteps, onTrace }: BlockedProps) {
     const bypass = guardrail.name === "safety_bypass";
     return (
         <article className="refusal" role="alert">
@@ -67,7 +71,7 @@ export function RefusalCard({ guardrail, answer, onOpen, onShowSteps }: BlockedP
                     <SourceList citations={answer.citations} onOpen={onOpen} />
                 </>
             )}
-            <BlockedFoot guardrail={guardrail} onShowSteps={onShowSteps} />
+            <BlockedFoot guardrail={guardrail} onShowSteps={onShowSteps} onTrace={onTrace} />
         </article>
     );
 }

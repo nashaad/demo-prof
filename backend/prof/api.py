@@ -1,4 +1,5 @@
 import json
+from dataclasses import asdict
 import sqlite3
 from collections.abc import Iterator
 from pathlib import Path
@@ -11,6 +12,7 @@ from fastapi.responses import StreamingResponse
 from prof import agents
 from prof.config import SQLITE_PATH
 from prof.events import Error, to_dict
+from prof.run_trace import load_run_trace
 
 EVALS_DIR = Path(__file__).resolve().parents[1] / "evals"
 
@@ -57,6 +59,14 @@ def ask(question: str, user_id: str, session_id: str) -> StreamingResponse:
         media_type="text/event-stream",
         headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"},
     )
+
+
+@app.get("/api/runs/{run_id}")
+def get_run(run_id: str) -> dict[str, Any]:
+    trace = load_run_trace(run_id)
+    if trace is None:
+        raise HTTPException(status_code=404, detail="run not found")
+    return asdict(trace)
 
 
 @app.get("/api/documents")

@@ -10,9 +10,10 @@ interface ConversationProps {
     user: DemoUser;
     onOpen: (ref: DocRef) => void;
     onShowSteps: (turnId: string) => void;
+    onTrace: (turnId: string) => void;
 }
 
-export function Conversation({ convo, user, onOpen, onShowSteps }: ConversationProps) {
+export function Conversation({ convo, user, onOpen, onShowSteps, onTrace }: ConversationProps) {
     const endRef = useRef<HTMLDivElement>(null);
     const last = convo.turns[convo.turns.length - 1];
     const marker = `${convo.turns.length}:${last?.events.length ?? 0}:${last?.status ?? ""}`;
@@ -50,6 +51,7 @@ export function Conversation({ convo, user, onOpen, onShowSteps }: ConversationP
                         active={convo.selected?.id === turn.id}
                         onOpen={onOpen}
                         onShowSteps={() => onShowSteps(turn.id)}
+                        onTrace={() => onTrace(turn.id)}
                     />
                 ))}
                 <div ref={endRef} />

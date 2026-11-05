@@ -9,9 +9,10 @@ interface TurnViewProps {
     active: boolean;
     onOpen: (ref: DocRef) => void;
     onShowSteps: () => void;
+    onTrace: () => void;
 }
 
-export function TurnView({ turn, active, onOpen, onShowSteps }: TurnViewProps) {
+export function TurnView({ turn, active, onOpen, onShowSteps, onTrace }: TurnViewProps) {
     const { answer, routed, blocked, error } = summarize(turn);
 
     return (
@@ -21,12 +22,12 @@ export function TurnView({ turn, active, onOpen, onShowSteps }: TurnViewProps) {
             </div>
             {blocked &&
                 (blocked.name === "emergency_language" ? (
-                    <EmergencyCard guardrail={blocked} answer={answer} onOpen={onOpen} onShowSteps={onShowSteps} />
+                    <EmergencyCard guardrail={blocked} answer={answer} onOpen={onOpen} onShowSteps={onShowSteps} onTrace={onTrace} />
                 ) : (
-                    <RefusalCard guardrail={blocked} answer={answer} onOpen={onOpen} onShowSteps={onShowSteps} />
+                    <RefusalCard guardrail={blocked} answer={answer} onOpen={onOpen} onShowSteps={onShowSteps} onTrace={onTrace} />
                 ))}
             {!blocked && answer && (
-                <AnswerCard answer={answer} routedDomain={routed?.domain} onOpen={onOpen} onShowSteps={onShowSteps} />
+                <AnswerCard answer={answer} routedDomain={routed?.domain} onOpen={onOpen} onShowSteps={onShowSteps} onTrace={onTrace} />
             )}
             {error && (
                 <div className="alert destructive" role="alert">

@@ -8,7 +8,7 @@ from functools import lru_cache
 import cohere
 
 from prof.config import RERANK_BASE_URL, RERANK_MIN_SCORE, RERANK_MODEL
-from prof.events import Passage
+from prof.events import Passage, SearchStats
 from prof.store import chroma_collection, connect, embed
 
 log = logging.getLogger(__name__)
@@ -29,6 +29,13 @@ RERANK_ENABLED = True
 
 def search(query: str, domain: str | None, k: int = 5, rerank: bool | None = None) -> list[Passage]:
     """Hybrid search in one domain (all domains when None): FTS5 bm25 and Chroma vectors, fused with RRF, then optionally reranked."""
+    return search_with_stats(query, domain, k, rerank)[0]
+
+
+def search_with_stats(
+    query: str, domain: str | None, k: int = 5, rerank: bool | None = None
+) -> tuple[list[Passage], SearchStats]:
+    """Same as search(), plus counts for each stage so a run can show how candidates were narrowed."""
     if rerank is None:
         rerank = RERANK_ENABLED
     bm25 = _bm25_hits(query, domain, CANDIDATES)
@@ -38,8 +45,6 @@ def search(query: str, domain: str | None, k: int = 5, rerank: bool | None = Non
     for hits in (bm25, vector):
         for rank, (chunk_id, _) in enumerate(hits, start=1):
             fused[chunk_id] = fused.get(chunk_id, 0.0) + 1.0 / (RRF_K + rank)
-    if not fused:
-        return []
 
     bm25_scores, vector_scores = dict(bm25), dict(vector)
     ranked = sorted(fused, key=lambda cid: fused[cid], reverse=True)
@@ -49,13 +54,32 @@ def search(query: str, domain: str | None, k: int = 5, rerank: bool | None = Non
         for p in pool
     ]
 
-    if rerank:
+    reranked, rerank_failed, below_min_score = 0, False, 0
+    if rerank and passages:
+        reranked = len(passages)
         passages = _rerank(query, passages)
-        passages = [p for p in passages if p.rerank_score is None or p.rerank_score >= RERANK_MIN_SCORE]
-        passages.sort(key=lambda p: _final_score(p), reverse=True)
-    else:
-        passages.sort(key=lambda p: _final_score(p), reverse=True)
-    return passages[:k]
+        rerank_failed = all(p.rerank_score is None for p in passages)
+        kept = [p for p in passages if p.rerank_score is None or p.rerank_score >= RERANK_MIN_SCORE]
+        below_min_score = len(passages) - len(kept)
+        passages = kept
+    passages.sort(key=lambda p: _final_score(p), reverse=True)
+    passages = passages[:k]
+
+    stats = SearchStats(
+        domain=domain,
+        keyword_query=_fts_query(query),
+        candidate_limit=CANDIDATES,
+        keyword_hits=len(bm25),
+        meaning_hits=len(vector),
+        merged=len(fused),
+        reranked=reranked,
+        rerank_model=RERANK_MODEL if rerank else None,
+        rerank_failed=rerank_failed,
+        min_score=RERANK_MIN_SCORE if rerank else None,
+        below_min_score=below_min_score,
+        returned=len(passages),
+    )
+    return passages, stats
 
 
 def _final_score(p: Passage) -> float:

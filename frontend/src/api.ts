@@ -13,3 +13,7 @@ export function documentPath(docId: string, revision?: string): string {
     const base = `/api/documents/${encodeURIComponent(docId)}`;
     return revision ? `${base}?revision=${encodeURIComponent(revision)}` : base;
 }
+
+export function runPath(runId: string): string {
+    return `/api/runs/${encodeURIComponent(runId)}`;
+}

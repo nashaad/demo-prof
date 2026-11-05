@@ -24,6 +24,22 @@ class Passage:
 
 
 @dataclass
+class SearchStats:
+    domain: str | None
+    keyword_query: str
+    candidate_limit: int
+    keyword_hits: int
+    meaning_hits: int
+    merged: int
+    reranked: int
+    rerank_model: str | None
+    rerank_failed: bool
+    min_score: float | None
+    below_min_score: int
+    returned: int
+
+
+@dataclass
 class Citation:
     doc_id: str
     title: str
@@ -64,6 +80,7 @@ class Passages:
     agent: str
     query: str
     passages: list[Passage] = field(default_factory=list)
+    searches: list[SearchStats] = field(default_factory=list)
     type: str = "passages"
 
 

@@ -16,7 +16,7 @@ from agno.team import Team, TeamMode
 from prof import retrieval
 from prof.config import AGENT_DB_PATH, CHAT_MODEL, DOMAINS, VAR_DIR
 from prof.events import (
-    Answer, AppEvent, Citation, Error, Guardrail, Memory, Passage, Passages, Routed, RunStarted, ToolCalled,
+    Answer, AppEvent, Citation, Error, Guardrail, Memory, Passage, Passages, Routed, RunStarted, SearchStats, ToolCalled,
 )
 from prof.guardrails import GUARDRAIL_NAMES, GUARDRAILS
 
@@ -24,7 +24,7 @@ ROUTER_NAME = "Plant Router"
 NOT_FOUND = "I couldn't find this in the plant documents."
 
 # Passages the search tools return, keyed by session id, read back by run() to emit exact scores.
-_passage_sink: dict[str, list[tuple[str, list[Passage]]]] = defaultdict(list)
+_passage_sink: dict[str, list[tuple[str, list[Passage], list[SearchStats]]]] = defaultdict(list)
 _sink_lock = threading.Lock()
 
 
@@ -47,12 +47,15 @@ def _format_for_model(passages: list[Passage]) -> str:
 
 def _make_search_tool(domain: str) -> Callable[..., str]:
     def search_docs(query: str, run_context: RunContext, include_other_domains: bool = False) -> str:
-        passages = retrieval.search(query, domain)
+        passages, stats = retrieval.search_with_stats(query, domain)
+        searches = [stats]
         if include_other_domains:
-            others = [p for p in retrieval.search(query, None) if p.domain != domain]
+            everywhere, wide_stats = retrieval.search_with_stats(query, None)
+            others = [p for p in everywhere if p.domain != domain]
             passages = passages + others[:3]
+            searches.append(wide_stats)
         with _sink_lock:
-            _passage_sink[run_context.session_id or ""].append((query, passages))
+            _passage_sink[run_context.session_id or ""].append((query, passages, searches))
         return _format_for_model(passages)
 
     search_docs.__name__ = f"search_{domain}_docs"
@@ -247,9 +250,11 @@ def _translate(raw: Any, state: _RunState) -> Iterator[AppEvent]:
             queue = _passage_sink.get(state.session_id) or []
             hit = queue.pop(0) if queue else None
         if hit:
-            query, passages = hit
+            query, passages, searches = hit
             state.passages.extend(passages)
-            yield Passages(agent=getattr(raw, "agent_name", "") or state.member_name, query=query, passages=passages)
+            yield Passages(
+                agent=getattr(raw, "agent_name", "") or state.member_name, query=query, passages=passages, searches=searches
+            )
 
     elif kind == "TeamRunContent":
         if isinstance(raw.content, str):

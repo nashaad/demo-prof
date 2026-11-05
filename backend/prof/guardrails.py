@@ -35,6 +35,7 @@ BYPASS_MESSAGE = (
 
 class EmergencyGuardrail(BaseGuardrail):
     name = "emergency_language"
+    looks_for = EMERGENCY_PATTERNS.pattern
 
     def check(self, run_input: RunInputType) -> None:
         match = EMERGENCY_PATTERNS.search(run_input.input_content_string())
@@ -51,6 +52,7 @@ class EmergencyGuardrail(BaseGuardrail):
 
 class SafetyBypassGuardrail(BaseGuardrail):
     name = "safety_bypass"
+    looks_for = BYPASS_PATTERN.pattern
 
     def check(self, run_input: RunInputType) -> None:
         match = BYPASS_PATTERN.search(run_input.input_content_string())
@@ -67,6 +69,10 @@ class SafetyBypassGuardrail(BaseGuardrail):
 
 class InjectionGuardrail(PromptInjectionGuardrail):
     name = "prompt_injection"
+
+    @property
+    def looks_for(self) -> str:
+        return " | ".join(self.injection_patterns)
 
 
 GUARDRAILS: list[BaseGuardrail] = [EmergencyGuardrail(), SafetyBypassGuardrail(), InjectionGuardrail()]
