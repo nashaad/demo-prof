@@ -1,0 +1,97 @@
+{
+  "setup": "no-rerank",
+  "summary": {
+    "retrieval_cases": 7,
+    "hit_at_1": 0.857,
+    "hit_at_5": 0.857,
+    "mrr": 0.857,
+    "avg_search_ms": 291,
+    "off_corpus_passages": 5
+  },
+  "cases": [
+    {
+      "id": "ppe_press4_cleaning",
+      "kind": "lookup",
+      "rank": 1,
+      "search_ms": 594,
+      "returned": 5
+    },
+    {
+      "id": "torque_c2_coupling",
+      "kind": "lookup",
+      "rank": 1,
+      "search_ms": 184,
+      "returned": 5
+    },
+    {
+      "id": "bore_tolerance_1142",
+      "kind": "lookup",
+      "rank": 1,
+      "search_ms": 311,
+      "returned": 5
+    },
+    {
+      "id": "press4_cracked_guard",
+      "kind": "lookup",
+      "rank": 1,
+      "search_ms": 287,
+      "returned": 5
+    },
+    {
+      "id": "bridge_light_curtain",
+      "kind": "refusal",
+      "rank": 1,
+      "search_ms": 211,
+      "returned": 5
+    },
+    {
+      "id": "emergency_hand_caught",
+      "kind": "emergency",
+      "rank": 2,
+      "search_ms": 228,
+      "returned": 5
+    },
+    {
+      "id": "lubrication_schedule_ambiguous",
+      "kind": "clarify",
+      "rank": null,
+      "search_ms": 364,
+      "returned": 5
+    },
+    {
+      "id": "press4_service_due",
+      "kind": "memory",
+      "rank": 1,
+      "search_ms": 249,
+      "returned": 5
+    },
+    {
+      "id": "fixture_clamp_torque_conflict",
+      "kind": "conflict",
+      "rank": 1,
+      "search_ms": 311,
+      "returned": 5
+    },
+    {
+      "id": "paint_booth_humidity",
+      "kind": "not_in_docs",
+      "rank": null,
+      "search_ms": 276,
+      "returned": 5
+    },
+    {
+      "id": "off_topic_lunch",
+      "kind": "off_topic",
+      "rank": null,
+      "search_ms": 239,
+      "returned": 5
+    },
+    {
+      "id": "lockout_paraphrase",
+      "kind": "paraphrase",
+      "rank": null,
+      "search_ms": 242,
+      "returned": 5
+    }
+  ]
+}

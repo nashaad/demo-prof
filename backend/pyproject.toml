@@ -1,0 +1,25 @@
+[project]
+name = "prof"
+version = "0.1.0"
+description = "Add your description here"
+requires-python = ">=3.12"
+dependencies = [
+    "agno>=3.1.12",
+    "aiosqlite>=0.22.1",
+    "chromadb>=1.5.9",
+    "cohere>=7.3.1",
+    "fastapi>=0.162.0",
+    "greenlet>=3.5.6",
+    "openai>=3.46.0",
+    "python-dotenv>=1.2.4",
+    "pyyaml>=6.0.3",
+    "sqlalchemy>=2.1.8",
+    "uvicorn[standard]>=0.54.0",
+]
+
+[build-system]
+requires = ["uv_build>=0.12.1,<0.13.0"]
+build-backend = "uv_build"
+
+[tool.uv.build-backend]
+module-root = ""
